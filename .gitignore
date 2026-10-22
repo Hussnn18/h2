@@ -1,0 +1,15 @@
+# Secrets: never commit
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Generated data (rebuild with: python -m data.generate)
+*.db
+*.db-journal
+
+# Bot logs
+*.log

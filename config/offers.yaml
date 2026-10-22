@@ -1,0 +1,102 @@
+# ───────────────────────────────────────────────────────────────────────────
+#  OFFER CATALOGUE
+#  kind:   percent_off | flat_off | free_delivery | bonus_points | reminder | early_access
+#  range:  the values the AI may choose from (percent, rupees, or points multiplier).
+#          rules.yaml can narrow it further, never widen it.
+#  eligible_when: all conditions must be true. Conditions you can use:
+#     has_cart: true                   customer left items in their cart
+#     min_orders: 1                    has ordered at least N times
+#     max_orders: 0                    has ordered at most N times (0 = never)
+#     min_days_since_last_order: 60
+#     max_days_since_signup: 45
+#     min_points: 100                  reward points balance
+#     points_expire_within_days: 21
+#     min_avg_order_inr: 1500
+#     lifecycle_in: [active, at_risk]  new | active | at_risk | lapsed | dormant
+#  fallback_message: sent when the AI is off or its message fails the checks.
+#     Placeholders: {first_name} {offer} {category} {product} {points}
+#     Don't write numbers: the system adds the amount, code and expiry.
+# ───────────────────────────────────────────────────────────────────────────
+
+offers:
+  cart_reminder:
+    name: Cart reminder
+    kind: reminder
+    goal: Bring back an abandoned cart at zero cost
+    eligible_when: {has_cart: true}
+    valid_hours: 24
+    fallback_message: "Hi {first_name}, you left {product} in your cart. It's still waiting for you whenever you're ready 🛒"
+
+  free_delivery:
+    name: Free delivery
+    kind: free_delivery
+    goal: Recover an abandoned cart for the price of delivery
+    cost_inr: 49
+    eligible_when: {has_cart: true}
+    valid_hours: 48
+    fallback_message: "Hi {first_name}, {product} is still in your cart. Finish your order and get {offer} on us 🚚"
+
+  welcome_discount:
+    name: Welcome discount
+    kind: percent_off
+    goal: Turn a new sign-up into a first order
+    range: [10, 15]
+    min_order_inr: 299
+    eligible_when: {max_orders: 0, max_days_since_signup: 45}
+    valid_hours: 72
+    fallback_message: "Welcome, {first_name}! Here's {offer} on your first {category} order 🎉"
+
+  win_back:
+    name: Win-back discount
+    kind: percent_off
+    goal: Bring back a customer who has stopped ordering
+    range: [10, 20]
+    min_order_inr: 499
+    eligible_when: {min_days_since_last_order: 60}
+    valid_hours: 72
+    fallback_message: "We've missed you, {first_name}! Come back and enjoy {offer} on {category} 💛"
+
+  category_discount:
+    name: Category discount
+    kind: percent_off
+    goal: Get an occasional buyer to order again
+    range: [5, 15]
+    min_order_inr: 699
+    eligible_when: {min_orders: 1, lifecycle_in: [active, at_risk]}
+    valid_hours: 48
+    fallback_message: "Hi {first_name}, picked for you: {offer} on {category} this week ✨"
+
+  flat_off:
+    name: Flat rupees off
+    kind: flat_off
+    goal: Raise order value with a minimum spend
+    range: [50, 300]
+    min_order_inr: 999
+    eligible_when: {min_orders: 2}
+    valid_hours: 48
+    fallback_message: "Hi {first_name}, treat yourself: {offer} on your next {category} order 🛍️"
+
+  bonus_points:
+    name: Bonus reward points
+    kind: bonus_points
+    goal: Reward loyal customers without cutting prices
+    range: [2, 3]
+    eligible_when: {min_orders: 3, lifecycle_in: [active, at_risk]}
+    valid_hours: 72
+    fallback_message: "Thanks for shopping with us, {first_name}! Your next order earns {offer} ⭐"
+
+  points_expiry:
+    name: Points expiry reminder
+    kind: reminder
+    goal: Remind customers to use points before they expire (costs nothing extra)
+    eligible_when: {min_points: 100, points_expire_within_days: 21}
+    valid_hours: 48
+    fallback_message: "Hi {first_name}, your {points} reward points expire soon. Use them on your next order before they're gone ⏰"
+
+  early_access:
+    name: Early sale access
+    kind: early_access
+    goal: Delight high-value customers without discounting
+    eligible_when: {min_avg_order_inr: 1500, lifecycle_in: [active, at_risk]}
+    valid_hours: 72
+    fallback_message: "{first_name}, as one of our valued shoppers you get {offer}. Enjoy first pick of the new {category} collection 🔑"

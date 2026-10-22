@@ -1,0 +1,48 @@
+# ───────────────────────────────────────────────────────────────────────────
+#  BUSINESS RULES
+#  Every offer, whether picked by the AI or by the rules engine, is checked
+#  against these limits before it is sent. Change a number and save: the next
+#  offer uses the new value (no restart needed).
+# ───────────────────────────────────────────────────────────────────────────
+
+# ── Money limits ───────────────────────────────────────────────────────────
+limits:
+  max_discount_percent: 20        # no offer above 20% off, ever
+  max_discount_inr: 500           # no single offer may give away more than ₹500
+  min_margin_left_percent: 5      # after the discount we must still earn at least 5%
+
+# Thin-margin categories get smaller discounts (percent, per category)
+category_max_discount_percent:
+  electronics: 5
+  grocery: 8
+  home: 15
+  beauty: 20
+  fashion: 20
+
+budget:
+  daily_discount_budget_inr: 5000 # expected discount value we may send out per day, all customers together
+
+# ── Don't annoy people ─────────────────────────────────────────────────────
+frequency:
+  max_offers_per_customer_per_day: 3   # demo value; a real store would use about 2 per week
+  min_minutes_between_offers: 1        # demo value; a real store would use about 48 hours
+  quiet_hours:                         # no offers pushed at night (India time)
+    start: "22:00"
+    end: "08:00"
+
+# ── Who should not get a discount ──────────────────────────────────────────
+targeting:
+  no_discount_if_ordered_within_days: 7     # recent buyers would likely buy anyway
+  block_discounts_if_return_rate_above: 0.4 # customers who return 40%+ of orders
+
+# ── Message checks ─────────────────────────────────────────────────────────
+messages:
+  max_length: 350                  # characters, before the code and terms are added
+  banned_phrases:                  # pressure tactics and promises we can't keep
+    - guaranteed
+    - last chance
+    - only today
+    - act now
+    - hurry
+    - free money
+    - lowest price ever
