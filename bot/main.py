@@ -13,12 +13,12 @@ from datetime import datetime
 from dotenv import load_dotenv
 from telegram import BotCommand, InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ChatAction, ParseMode
-from telegram.error import BadRequest, Forbidden, TelegramError
+from telegram.error import BadRequest, Forbidden, NetworkError, TelegramError
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
 
 from data.generate import generate
 from engine import agent, db
-from engine.decide import decide
+from engine.decide import decide, has_offer
 from engine.features import build_profile
 
 load_dotenv()
@@ -91,6 +91,20 @@ async def send_offer(bot, chat_id: int, customer_id: int, trigger: str) -> bool:
     return True
 
 
+def assign_customer(chat_id: int) -> int:
+    """Link the chat to a free synthetic customer who qualifies for an offer right now."""
+    now = db.now_ist()
+    return db.link_new_customer(CONN, chat_id, now, accept=lambda customer_id: has_offer(CONN, customer_id, now))
+
+
+async def show_typing(bot, chat_id: int) -> None:
+    """Cosmetic only: never let a failed typing indicator stop an offer."""
+    try:
+        await bot.send_chat_action(chat_id, ChatAction.TYPING)
+    except TelegramError as e:
+        log.warning("Typing indicator failed: %s", e)
+
+
 async def current_user(update: Update) -> sqlite3.Row | None:
     user = db.get_user(CONN, update.effective_chat.id)
     if user is None:
@@ -104,13 +118,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id = update.effective_chat.id
     user = db.get_user(CONN, chat_id)
     if user is None:
-        customer_id = db.link_new_customer(CONN, chat_id, db.now_ist())
+        customer_id = assign_customer(chat_id)
     else:
         db.set_opted_out(CONN, chat_id, False)
         customer_id = user["customer_id"]
     await update.message.reply_html(WELCOME)
     await update.message.reply_html(profile_card(customer_id))
-    await context.bot.send_chat_action(chat_id, ChatAction.TYPING)
+    await show_typing(context.bot, chat_id)
     await send_offer(context.bot, chat_id, customer_id, "pull")
 
 
@@ -121,7 +135,7 @@ async def offer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if user["opted_out"]:
         await update.message.reply_text("You've opted out of offers. Send /start to opt back in.")
         return
-    await context.bot.send_chat_action(user["chat_id"], ChatAction.TYPING)
+    await show_typing(context.bot, user["chat_id"])
     await send_offer(context.bot, user["chat_id"], user["customer_id"], "pull")
 
 
@@ -134,7 +148,7 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def new_persona(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if await current_user(update) is None:
         return
-    customer_id = db.link_new_customer(CONN, update.effective_chat.id, db.now_ist())
+    customer_id = assign_customer(update.effective_chat.id)
     await update.message.reply_html("🔄 New customer assigned.\n\n" + profile_card(customer_id))
 
 
@@ -230,9 +244,15 @@ async def stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def on_error(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if isinstance(context.error, NetworkError) and update is None:
+        log.warning("Telegram unreachable, retrying: %s", context.error)  # internet dropped while polling
+        return
     log.error("Error while handling an update", exc_info=context.error)
     if isinstance(update, Update) and update.effective_chat:
-        await context.bot.send_message(update.effective_chat.id, "😕 Something went wrong. Please try again.")
+        try:
+            await context.bot.send_message(update.effective_chat.id, "😕 Something went wrong. Please try again.")
+        except TelegramError:
+            pass  # Telegram unreachable; nothing more we can do for this update
 
 
 async def set_menu(app: Application) -> None:
@@ -249,7 +269,9 @@ def main() -> None:
         generate()
     CONN = db.connect()
 
-    app = Application.builder().token(token).post_init(set_menu).build()
+    app = (Application.builder().token(token)
+           .connect_timeout(20).read_timeout(30).write_timeout(30).pool_timeout(10)  # patient on slow networks
+           .post_init(set_menu).build())
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("offer", offer))
     app.add_handler(CommandHandler("profile", profile))

@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 from engine import agent, db, eligibility, render, scorer
-from engine.features import build_profile
+from engine.features import Profile, build_profile
 from engine.rules import load_offers, load_rules
 from engine.validator import OfferChoice, validate
 
@@ -88,6 +88,45 @@ async def decide(conn: sqlite3.Connection, customer_id: int, chat_id: int | None
         code=code, expires_at=expires.isoformat(), message=text, reason=choice.reason, why=why,
         ai_attempts=attempts, rejected=json.dumps(rejected, ensure_ascii=False), status="sent")
     return Decision(True, text, decision_id)
+
+
+def has_offer(conn: sqlite3.Connection, customer_id: int, now: datetime | None = None) -> bool:
+    """True if the rules allow at least one offer for this customer right now."""
+    now = now or db.now_ist()
+    rules = load_rules()
+    budget_left = rules.budget.daily_discount_budget_inr - db.budget_used_today(conn, now)
+    p = build_profile(conn, customer_id, now)
+    return bool(eligibility.check(p, rules, load_offers(), db.category_margins(conn), budget_left, now).allowed)
+
+
+@dataclass
+class Preview:
+    profile: Profile
+    eligibility: eligibility.Eligibility
+    picks: list[scorer.Pick]
+    choice: OfferChoice
+    errors: list[str]
+    message: str | None          # rendered HTML, if an offer would be sent
+
+
+def preview(conn: sqlite3.Connection, customer_id: int, now: datetime | None = None) -> Preview:
+    """What the rules engine would send this customer right now. Sends and logs nothing."""
+    now = now or db.now_ist()
+    rules, offers = load_rules(), load_offers()
+    margins = db.category_margins(conn)
+    p = build_profile(conn, customer_id, now)
+    budget_left = rules.budget.daily_discount_budget_inr - db.budget_used_today(conn, now)
+    elig = eligibility.check(p, rules, offers, margins, budget_left, now)
+    picks = scorer.rank(p, elig.allowed, margins)
+    choice = scorer.as_choice(picks, elig.allowed)
+    errors = validate(choice, elig.allowed, rules, budget_left, render.available_placeholders(p))
+    message = None
+    if choice.offer_id != "none" and not errors:
+        a = elig.allowed[choice.offer_id]
+        value = choice.value if a.offer.has_value else None
+        message = render.render(choice.message, a, value, p, render.new_code(a.offer.kind),
+                                now + timedelta(hours=a.offer.valid_hours))
+    return Preview(p, elig, picks, choice, errors, message)
 
 
 def explain(choice: OfferChoice, source: str, rejected: list, a: eligibility.Allowed, value: int | None,

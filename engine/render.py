@@ -53,10 +53,10 @@ def render(message: str, a: Allowed, value: int | None, p: Profile, code: str | 
               "product": (p.cart_product or "").lower(), "points": f"{p.points:,}"}
 
     def fill(m):
-        text = html.escape(values[m.group(1)])
+        text = html.escape(values[m.group(1)], quote=False)
         return f"<b>{text}</b>" if m.group(1) == "offer" else text
 
-    body = PLACEHOLDER.sub(fill, html.escape(message.strip()))
+    body = PLACEHOLDER.sub(fill, html.escape(message.strip(), quote=False))
     if code is None:
         return body
 

@@ -2,6 +2,7 @@
 
 import os
 import sqlite3
+from collections.abc import Callable
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -124,23 +125,28 @@ def get_user(conn: sqlite3.Connection, chat_id: int) -> sqlite3.Row | None:
     return conn.execute("SELECT * FROM telegram_users WHERE chat_id = ?", (chat_id,)).fetchone()
 
 
-def link_new_customer(conn: sqlite3.Connection, chat_id: int, now: datetime) -> int:
-    """Give this chat a synthetic customer nobody else is playing (one with some history)."""
-    row = conn.execute(
+def link_new_customer(conn: sqlite3.Connection, chat_id: int, now: datetime,
+                      accept: Callable[[int], bool] = lambda customer_id: True) -> int:
+    """Give this chat a synthetic customer nobody else is playing (one with some history).
+
+    `accept` lets the caller prefer certain customers, e.g. ones with an offer available right now.
+    """
+    candidates = [r["id"] for r in conn.execute(
         "SELECT id FROM customers "
         "WHERE id NOT IN (SELECT customer_id FROM telegram_users) "
         "AND (id IN (SELECT customer_id FROM orders) OR id IN (SELECT customer_id FROM carts)) "
-        "ORDER BY RANDOM() LIMIT 1"
-    ).fetchone()
-    if row is None:
+        "ORDER BY RANDOM() LIMIT 200"
+    )]
+    if not candidates:
         raise RuntimeError("No free synthetic customers left; generate more data.")
+    customer_id = next((c for c in candidates if accept(c)), candidates[0])
     conn.execute(
         "INSERT INTO telegram_users (chat_id, customer_id, joined_at, opted_out) VALUES (?, ?, ?, 0) "
         "ON CONFLICT(chat_id) DO UPDATE SET customer_id = excluded.customer_id, opted_out = 0",
-        (chat_id, row["id"], now.isoformat()),
+        (chat_id, customer_id, now.isoformat()),
     )
     conn.commit()
-    return row["id"]
+    return customer_id
 
 
 def set_opted_out(conn: sqlite3.Connection, chat_id: int, opted_out: bool) -> None:

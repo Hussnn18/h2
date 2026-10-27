@@ -62,7 +62,10 @@ def check(p: Profile, rules: Rules, offers: dict[str, Offer], margins: dict[str,
 
     allowed, skipped = {}, {}
     for offer_id, offer in offers.items():
-        unmet = [describe_condition(n, v) for n, v in offer.eligible_when.items() if not CONDITIONS[n][1](p, v)]
+        if not offer.enabled:
+            skipped[offer_id] = "switched off by the marketing team"
+            continue
+        unmet =[describe_condition(n, v) for n, v in offer.eligible_when.items() if not CONDITIONS[n][1](p, v)]
         if unmet:
             skipped[offer_id] = "needs a customer who " + "; ".join(unmet)
             continue

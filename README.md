@@ -87,7 +87,25 @@ python -m pytest
 | `/campaign` | Admin: push an offer to everyone, rules permitting |
 | `/stats` | Admin: users, budget used, decisions by source |
 
-## Changing the rules (for the marketing team)
+## Marketing portal
+
+A web portal where a marketing team manages offers and rules without touching code:
+
+```bash
+python -m streamlit run portal/app.py
+```
+
+| Page | What you can do |
+|---|---|
+| **Overview** | Players, offers sent, claim rate, budget used today, AI vs rules picks, results per offer, latest decisions |
+| **Offers** | See every offer; switch one on/off; edit its range, minimum order, who qualifies and fallback message (checked live by the same rule checker the bot uses); create or delete offers |
+| **Rules** | Max discount (% and ₹), margin floor, category caps, daily budget, offers per day, quiet hours, who gets no discount, banned phrases |
+| **Customer preview** | Pick any customer or Telegram player: their profile, which offers they qualify for (and why not), and the message they would get right now. Nothing is sent |
+
+Saves are validated before they are written and keep the comments in the YAML files. The bot uses them from the
+next offer. Set `PORTAL_PASSWORD` in `.env` to require a password.
+
+## Changing the rules by hand
 
 Edit [config/rules.yaml](config/rules.yaml) and [config/offers.yaml](config/offers.yaml). Every number has a
 plain-English comment. Changes apply to the next offer without a restart. A typo produces a clear error
@@ -113,6 +131,7 @@ config/    rules.yaml, offers.yaml          ← marketing edits these
 data/      generate.py                      ← synthetic data + realism report
 engine/    features → eligibility → scorer → agent → validator → render, tied together in decide.py
 bot/       main.py                          ← Telegram bot
+portal/    app.py (menu), views.py (pages)  ← marketing portal (Streamlit)
 tests/     validator, engine, data realism
 plan.md    full build plan and roadmap
 ```

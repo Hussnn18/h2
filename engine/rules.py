@@ -110,6 +110,7 @@ class Rules(_Strict):
 
 class Offer(_Strict):
     name: str
+    enabled: bool = True
     kind: OfferKind
     goal: str
     range: tuple[int, int] | None = None

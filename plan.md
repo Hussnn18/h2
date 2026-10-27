@@ -22,9 +22,11 @@ README, CLAUDE.md.
 **You need to do:** create the bot with @BotFather, put the token (and optionally the Anthropic API key) in
 `.env`, run `python -m bot.main`, and share the bot link with classmates.
 
+**Done since:** marketing portal (Streamlit): overview dashboard, offer editor with on/off switch and live
+message check, rules editor, customer preview; comment-preserving config saves; win-back free-delivery offer.
+
 **Next (M1 to M3 leftovers):** sessions/browsing data and a past randomised campaign in the generator, holdout
-group + strategy simulator, `/shop` with abandoned-cart trigger, Streamlit dashboard + rule editor, always-on
-hosting.
+group + strategy simulator, `/shop` with abandoned-cart trigger, always-on hosting.
 
 ---
 

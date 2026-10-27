@@ -9,6 +9,7 @@ See `plan.md` for the roadmap and `README.md` for setup.
 - Install: `.venv\Scripts\python -m pip install -r requirements.txt`
 - Generate data: `.venv\Scripts\python -m data.generate --customers 500`
 - Run bot: `.venv\Scripts\python -m bot.main` (needs `.env`, see `.env.example`)
+- Run portal: `.venv\Scripts\python -m streamlit run portal/app.py` (pages live in `portal/views.py`)
 - Tests: `.venv\Scripts\python -m pytest`
 
 ## Architecture
@@ -23,7 +24,9 @@ See `plan.md` for the roadmap and `README.md` for setup.
 - The validator re-checks hard limits itself; never make it trust the eligibility step.
 - The AI never writes numbers, prices, codes or dates. Those come from placeholders filled in `render.py`.
 - The engine never reads `hidden_*` columns. They exist only to evaluate targeting later.
-- Business limits belong in `config/rules.yaml`, not in code. Keep its comments plain English for marketers.
+- Business limits belong in `config/rules.yaml`, not in code. Keep its comments plain English for marketers,
+  and don't repeat the values in comments (the portal changes them).
+- Code that writes config goes through `engine/config_store.py`: it validates before writing and keeps comments.
 - Only synthetic customer data. Secrets live in `.env` (git-ignored); never commit tokens or keys.
 
 ## Conventions

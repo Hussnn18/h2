@@ -1,5 +1,6 @@
 # ───────────────────────────────────────────────────────────────────────────
-#  OFFER CATALOGUE
+#  OFFER CATALOGUE  (easiest to edit in the portal: streamlit run portal/app.py)
+#  enabled: false switches an offer off without deleting it
 #  kind:   percent_off | flat_off | free_delivery | bonus_points | reminder | early_access
 #  range:  the values the AI may choose from (percent, rupees, or points multiplier).
 #          rules.yaml can narrow it further, never widen it.
@@ -55,6 +56,15 @@ offers:
     eligible_when: {min_days_since_last_order: 60}
     valid_hours: 72
     fallback_message: "We've missed you, {first_name}! Come back and enjoy {offer} on {category} 💛"
+
+  win_back_delivery:
+    name: Win-back free delivery
+    kind: free_delivery
+    goal: Bring back a customer who has stopped ordering when a discount isn't allowed (thin margins)
+    cost_inr: 49
+    eligible_when: {min_days_since_last_order: 60}
+    valid_hours: 72
+    fallback_message: "We've missed you, {first_name}! Your next order comes with {offer}, no strings attached 🚚"
 
   category_discount:
     name: Category discount

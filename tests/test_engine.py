@@ -6,7 +6,7 @@ import pytest
 
 from conftest import MARGINS, NOW
 from engine import agent, db
-from engine.decide import decide
+from engine.decide import decide, has_offer
 from engine.eligibility import check
 from engine.validator import OfferChoice
 
@@ -46,11 +46,19 @@ def test_thin_margin_category_blocks_big_discounts(rules, offers, make_profile):
     p = make_profile(cart_category="electronics", fav_category="electronics")
     elig = check(p, rules, offers, MARGINS, 5000, NOW)
     assert "win_back" not in elig.allowed  # electronics cap is below the offer's minimum
+    assert "win_back_delivery" in elig.allowed  # so we win them back with free delivery instead
 
 
 def test_no_budget_leaves_only_free_offers(rules, offers, make_profile):
     allowed = check(make_profile(), rules, offers, MARGINS, 0, NOW).allowed
     assert allowed and all(a.cost(a.min_value) == 0 for a in allowed.values())
+
+
+def test_switched_off_offer_is_never_allowed(rules, offers, make_profile):
+    offers["win_back"] = offers["win_back"].model_copy(update={"enabled": False})
+    elig = check(make_profile(), rules, offers, MARGINS, 5000, NOW)
+    assert "win_back" not in elig.allowed
+    assert "switched off" in elig.skipped["win_back"]
 
 
 # ── End to end on generated data ───────────────────────────────────────────
@@ -66,6 +74,12 @@ def test_rules_only_decisions_stay_within_limits(generated_db, rules):
         assert r["cost_inr"] <= rules.limits.max_discount_inr
         if r["offer_id"] in ("win_back", "welcome_discount", "category_discount"):
             assert r["value"] <= rules.limits.max_discount_percent
+
+
+def test_new_players_get_a_customer_with_an_offer(generated_db):
+    conn = db.connect(generated_db)
+    customer_id = db.link_new_customer(conn, 999, TODAY, accept=lambda c: has_offer(conn, c, TODAY))
+    assert has_offer(conn, customer_id, TODAY)
 
 
 def _customer_with_an_offer(conn) -> int:

@@ -1,15 +1,15 @@
 # ───────────────────────────────────────────────────────────────────────────
 #  BUSINESS RULES
 #  Every offer, whether picked by the AI or by the rules engine, is checked
-#  against these limits before it is sent. Change a number and save: the next
-#  offer uses the new value (no restart needed).
+#  against these limits before it is sent. Change a number and save (here or
+#  in the portal: streamlit run portal/app.py): the next offer uses it.
 # ───────────────────────────────────────────────────────────────────────────
 
 # ── Money limits ───────────────────────────────────────────────────────────
 limits:
-  max_discount_percent: 20        # no offer above 20% off, ever
-  max_discount_inr: 500           # no single offer may give away more than ₹500
-  min_margin_left_percent: 5      # after the discount we must still earn at least 5%
+  max_discount_percent: 20        # highest % off any offer may give, ever
+  max_discount_inr: 500           # most rupees any single offer may give away
+  min_margin_left_percent: 5      # margin (%) we must still earn after the discount
 
 # Thin-margin categories get smaller discounts (percent, per category)
 category_max_discount_percent:
@@ -33,7 +33,7 @@ frequency:
 # ── Who should not get a discount ──────────────────────────────────────────
 targeting:
   no_discount_if_ordered_within_days: 7     # recent buyers would likely buy anyway
-  block_discounts_if_return_rate_above: 0.4 # customers who return 40%+ of orders
+  block_discounts_if_return_rate_above: 0.4 # share of orders returned, as a fraction (0.4 means 40%)
 
 # ── Message checks ─────────────────────────────────────────────────────────
 messages:
