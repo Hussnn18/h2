@@ -124,6 +124,13 @@ has to infer it from orders, like a real platform. Patterns checked by `tests/te
 - more cash-on-delivery in smaller cities
 - about a third of customers have an abandoned cart
 
+### Testing dataset
+
+The generated data is also in [data/sample/](data/sample/) as CSV: `customers.csv` (500), `products.csv` (126),
+`orders.csv` (2,238) and `carts.csv` (163). The `hidden_type` and `hidden_price_sensitivity` columns are the
+ground truth for evaluation; the engine never reads them. Regenerate a fresh copy with
+`python -m data.generate --customers 500`.
+
 ## Project layout
 
 ```

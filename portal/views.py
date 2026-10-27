@@ -477,9 +477,9 @@ def customer_page() -> None:
     cols[0].metric("Stage", stage, border=True)
     cols[1].metric("Orders (last year)", p.orders, border=True)
     cols[2].metric("Avg order", f"₹{p.avg_order_inr:,.0f}" if p.orders else "—", border=True)
-    cols[3].metric("Last order", f"{p.days_since_last_order} days ago" if p.days_since_last_order is not None
+    cols[3].metric("Days since order", p.days_since_last_order if p.days_since_last_order is not None
                    else "never", border=True)
-    cols[4].metric("Uses coupons", f"{p.discount_share:.0%} of orders" if p.orders else "—", border=True)
+    cols[4].metric("Orders w/ coupon", f"{p.discount_share:.0%}" if p.orders else "—", border=True)
     cols[5].metric("Reward points", f"{p.points:,}", border=True)
     facts = [f"📍 {p.city}", f"❤️ likes {p.fav_category}", f"🗣️ {agent.LANGUAGES.get(p.language, p.language)}"]
     if p.cart_product:

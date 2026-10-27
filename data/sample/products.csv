@@ -1,0 +1,127 @@
+id,name,category,price,margin_pct
+1,Everyday cotton kurta set,fashion,719,50.3
+2,Classic cotton kurta set,fashion,1199,45.8
+3,Premium cotton kurta set,fashion,2149,46.8
+4,Everyday phulkari dupatta,fashion,769,55.9
+5,Classic phulkari dupatta,fashion,1279,47.2
+6,Premium phulkari dupatta,fashion,2299,43.2
+7,Everyday running shoes,fashion,489,49.7
+8,Classic running shoes,fashion,819,45.9
+9,Premium running shoes,fashion,1479,43.4
+10,Everyday denim jacket,fashion,339,44.9
+11,Classic denim jacket,fashion,559,40.0
+12,Premium denim jacket,fashion,1009,38.2
+13,Everyday printed salwar suit,fashion,349,34.6
+14,Classic printed salwar suit,fashion,579,38.5
+15,Premium printed salwar suit,fashion,1049,57.2
+16,Everyday casual sneakers,fashion,789,45.5
+17,Classic casual sneakers,fashion,1319,42.9
+18,Premium casual sneakers,fashion,2379,48.3
+19,Everyday woollen shawl,fashion,1239,43.5
+20,Classic woollen shawl,fashion,2059,47.5
+21,Premium woollen shawl,fashion,3719,55.7
+22,Everyday formal shirt,fashion,679,52.5
+23,Classic formal shirt,fashion,1129,48.8
+24,Premium formal shirt,fashion,2029,34.8
+25,Everyday hooded sweatshirt,fashion,599,51.5
+26,Classic hooded sweatshirt,fashion,999,43.9
+27,Premium hooded sweatshirt,fashion,1799,33.0
+28,Everyday embroidered jutti,fashion,689,40.9
+29,Classic embroidered jutti,fashion,1149,50.7
+30,Premium embroidered jutti,fashion,2079,38.2
+31,Everyday wireless earbuds,electronics,2179,9.9
+32,Classic wireless earbuds,electronics,3629,9.3
+33,Premium wireless earbuds,electronics,6529,8.9
+34,Everyday smartwatch,electronics,579,9.5
+35,Classic smartwatch,electronics,959,9.9
+36,Premium smartwatch,electronics,1729,9.6
+37,Everyday power bank,electronics,1789,8.1
+38,Classic power bank,electronics,2989,10.0
+39,Premium power bank,electronics,5379,9.3
+40,Everyday bluetooth speaker,electronics,4179,10.0
+41,Classic bluetooth speaker,electronics,6969,7.9
+42,Premium bluetooth speaker,electronics,12549,7.5
+43,Everyday neckband earphones,electronics,479,8.9
+44,Classic neckband earphones,electronics,809,8.2
+45,Premium neckband earphones,electronics,1449,6.0
+46,Everyday smart led bulb,electronics,1809,11.8
+47,Classic smart led bulb,electronics,3019,7.1
+48,Premium smart led bulb,electronics,5439,8.3
+49,Everyday beard trimmer,electronics,3209,9.2
+50,Classic beard trimmer,electronics,5349,8.0
+51,Premium beard trimmer,electronics,9639,10.2
+52,Everyday mixer grinder,electronics,639,9.2
+53,Classic mixer grinder,electronics,1059,9.8
+54,Premium mixer grinder,electronics,1909,12.1
+55,Everyday vitamin c face serum,beauty,259,36.5
+56,Classic vitamin c face serum,beauty,429,48.0
+57,Premium vitamin c face serum,beauty,769,29.5
+58,Everyday sunscreen lotion,beauty,159,48.1
+59,Classic sunscreen lotion,beauty,259,39.6
+60,Premium sunscreen lotion,beauty,469,44.5
+61,Everyday herbal hair oil,beauty,179,39.4
+62,Classic herbal hair oil,beauty,289,47.9
+63,Premium herbal hair oil,beauty,529,44.9
+64,Everyday matte lipstick,beauty,119,36.4
+65,Classic matte lipstick,beauty,189,47.2
+66,Premium matte lipstick,beauty,349,39.9
+67,Everyday neem face wash,beauty,99,42.8
+68,Classic neem face wash,beauty,169,40.8
+69,Premium neem face wash,beauty,299,32.6
+70,Everyday beard oil,beauty,149,32.4
+71,Classic beard oil,beauty,249,45.4
+72,Premium beard oil,beauty,449,42.3
+73,Everyday kajal,beauty,299,24.3
+74,Classic kajal,beauty,499,37.1
+75,Premium kajal,beauty,889,40.6
+76,Everyday body lotion,beauty,209,39.3
+77,Classic body lotion,beauty,359,36.9
+78,Premium body lotion,beauty,639,33.2
+79,Everyday pressure cooker,home,249,28.6
+80,Classic pressure cooker,home,409,28.3
+81,Premium pressure cooker,home,739,25.5
+82,Everyday steel bottle set,home,919,32.0
+83,Classic steel bottle set,home,1529,32.5
+84,Premium steel bottle set,home,2749,27.5
+85,Everyday non-stick tawa,home,389,34.3
+86,Classic non-stick tawa,home,639,39.0
+87,Premium non-stick tawa,home,1159,32.6
+88,Everyday cotton bedsheet set,home,499,27.2
+89,Classic cotton bedsheet set,home,839,28.0
+90,Premium cotton bedsheet set,home,1509,28.4
+91,Everyday storage container set,home,639,22.4
+92,Classic storage container set,home,1059,28.1
+93,Premium storage container set,home,1909,29.9
+94,Everyday dinner set,home,279,30.0
+95,Classic dinner set,home,459,40.3
+96,Premium dinner set,home,829,31.3
+97,Everyday wall clock,home,789,31.9
+98,Classic wall clock,home,1319,26.6
+99,Premium wall clock,home,2379,38.6
+100,Everyday cushion covers,home,899,33.3
+101,Classic cushion covers,home,1509,34.5
+102,Premium cushion covers,home,2709,32.7
+103,Everyday chakki atta,grocery,69,12.2
+104,Classic chakki atta,grocery,109,8.9
+105,Premium chakki atta,grocery,199,13.4
+106,Everyday basmati rice,grocery,149,13.5
+107,Classic basmati rice,grocery,259,11.7
+108,Premium basmati rice,grocery,459,15.6
+109,Everyday mustard oil,grocery,119,12.5
+110,Classic mustard oil,grocery,209,14.2
+111,Premium mustard oil,grocery,369,11.8
+112,Everyday desi ghee,grocery,99,10.8
+113,Classic desi ghee,grocery,169,14.6
+114,Premium desi ghee,grocery,299,11.9
+115,Everyday assam tea,grocery,129,11.1
+116,Classic assam tea,grocery,209,11.9
+117,Premium assam tea,grocery,379,12.3
+118,Everyday dry fruits mix,grocery,159,13.6
+119,Classic dry fruits mix,grocery,269,12.2
+120,Premium dry fruits mix,grocery,489,13.3
+121,Everyday pinni gift box,grocery,69,11.1
+122,Classic pinni gift box,grocery,109,11.0
+123,Premium pinni gift box,grocery,199,15.0
+124,Everyday rajma,grocery,69,10.0
+125,Classic rajma,grocery,109,12.2
+126,Premium rajma,grocery,199,14.7
